@@ -1,0 +1,1 @@
+Text sent from server by Ajax.
