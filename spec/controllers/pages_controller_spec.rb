@@ -9,7 +9,7 @@ describe PagesController do
       response.should be_success
     end
 
-     it "should have the right title" do
+     it "should have the right home title" do
       get 'home'
       response.should have_selector("title", :content => "ROR Tutorial Sample App | Home")
     end
