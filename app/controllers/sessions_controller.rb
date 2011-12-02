@@ -3,11 +3,19 @@ class SessionsController < ApplicationController
     @title = "Sign in"
   end
   def create
-    @title = "Sign in"
+    user = User.authenticate(params[:session][:email],
+			     params[:session][:password])
+    if user.nil?
+     flash.now[:error] = "Invalid email/password combination"
+     @title = "Sign in"
+     render 'new'
+    else
+     #Handle sucessful signin
+    end
   end
   def destroy
     @title = "Sign in"
   end
 
-
 end
+
