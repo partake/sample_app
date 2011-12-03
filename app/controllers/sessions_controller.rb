@@ -11,10 +11,13 @@ class SessionsController < ApplicationController
      render 'new'
     else
      sign_in user
+     flash[:success] = "Welcome to Sample App, #{user.name}!"
      redirect_to user
     end
   end
   def destroy
+#    flash[:success] = "You have signed out sucessfully, #{@current_user.name}!"
+    flash[:success] = "You have signed out sucessfully."
     sign_out
     redirect_to root_path
   end
