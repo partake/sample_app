@@ -16,7 +16,8 @@ class SessionsController < ApplicationController
     end
   end
   def destroy
-#    flash[:success] = "You have signed out sucessfully, #{@current_user.name}!"
+# Both work
+#    flash[:success] = "You have signed out sucessfully, #{current_user.name}!"
     flash[:success] = "You have signed out sucessfully."
     sign_out
     redirect_to root_path

@@ -1,4 +1,6 @@
-class UsersController < ApplicationController
+class UsersController < ApplicationController				  
+	before_filter :authenticate, :only => [:edit, :update]
+
   def show
     @user = User.find(params[:id])
     @title = @user.name
@@ -14,8 +16,8 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     if @user.save
       sign_in @user
-      flash[:success] = "Welcome to the Sample App!"
-#      flash[:success] = "Welcome to the Sample App, #{@user.name}!"
+#      flash[:success] = "Welcome to the Sample App!"
+      flash[:success] = "Welcome to the Sample App, #{@user.name}!"
       redirect_to user_path(@user)
     else
       @title = "Sign up"
@@ -39,5 +41,10 @@ class UsersController < ApplicationController
     end
   end
 
+  private 
+
+    def authenticate
+	deny_access unless signed_in?
+    end
 
 end

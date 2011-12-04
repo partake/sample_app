@@ -3,6 +3,8 @@ require 'spec_helper'
 describe UsersController do
   render_views
 
+
+
   describe "GET 'show'" do 
 
     before(:each) do
@@ -96,7 +98,7 @@ describe UsersController do
 
       it "should have a welcome message" do
         post :create, :user => @attr
-        flash[:success].should =~ /welcome to the sample app!/i
+        flash[:success].should =~ /welcome/i
       end
 
       it "should sign the user in" do
@@ -166,4 +168,24 @@ describe UsersController do
       end
     end
   end
+
+  describe "authentication of edit/update actions" do
+
+    before(:each) do
+      @user = Factory(:user)
+    end
+
+    it "should deny access to 'edit'"do
+      get :edit, :id => @user
+      response.should redirect_to(signin_path)
+    end
+
+    it "should deny access to 'update'"do
+      put :update, :id => @user, :user => {}
+      response.should redirect_to(signin_path)
+    end
+
+
+  end
+
 end
