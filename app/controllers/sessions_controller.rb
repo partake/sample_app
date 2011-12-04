@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
     else
      sign_in user
      flash[:success] = "Welcome to Sample App, #{user.name}!"
-     redirect_to user
+     redirect_back_or user
     end
   end
   def destroy

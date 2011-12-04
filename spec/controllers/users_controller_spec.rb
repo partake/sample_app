@@ -3,8 +3,6 @@ require 'spec_helper'
 describe UsersController do
   render_views
 
-
-
   describe "GET 'show'" do 
 
     before(:each) do
@@ -45,8 +43,6 @@ describe UsersController do
   end
 
   describe "GET 'new'" do
-
-    
 
     it "should be successful" do
       get :new
@@ -175,15 +171,35 @@ describe UsersController do
       @user = Factory(:user)
     end
 
-    it "should deny access to 'edit'"do
-      get :edit, :id => @user
-      response.should redirect_to(signin_path)
-    end
+		describe"for non-signed in users" do
+		  it "should deny access to 'edit'"do
+		    get :edit, :id => @user
+		    response.should redirect_to(signin_path)
+        flash[:notice].should =~ /sign in/i
+		  end
 
-    it "should deny access to 'update'"do
-      put :update, :id => @user, :user => {}
-      response.should redirect_to(signin_path)
-    end
+		  it "should deny access to 'update'"do
+		    put :update, :id => @user, :user => {}
+		    response.should redirect_to(signin_path)
+		  end
+		end
+
+		describe"for signed in users" do
+			before(:each) do
+				wrong_user = Factory(:user, :email => "user@example.net")
+				test_sign_in(wrong_user)
+			end
+
+		  it "should matching users for 'edit'"do
+		    get :edit, :id => @user
+		    response.should redirect_to(root_path)
+ 		  end
+
+		  it "should matching users for 'update'"do
+		    put :update, :id => @user, :user => {}
+		    response.should redirect_to(root_path)
+ 		  end
+		end
 
 
   end
