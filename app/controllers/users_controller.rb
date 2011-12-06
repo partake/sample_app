@@ -1,5 +1,5 @@
 class UsersController < ApplicationController				  
-	before_filter :authenticate, :only => [:edit, :update]
+	before_filter :authenticate, :only => [:index, :edit, :update]
 	before_filter :correct_user, :only => [:edit, :update]
 
   def show
@@ -8,16 +8,20 @@ class UsersController < ApplicationController
   end
 
   def new
-    @user = User.new
-    @title = "Sign up"
-  end
+   @user = User.new
+   @title = "Sign up"
+  end 
+		
+	def index
+    @title = "All users"
+    @users = User.all
+	end
 
   def create
 #    raise params[:user].inspect
     @user = User.new(params[:user])
     if @user.save
       sign_in @user
-#      flash[:success] = "Welcome to the Sample App!"
       flash[:success] = "Welcome to the Sample App, #{@user.name}!"
       redirect_to user_path(@user)
     else
@@ -51,7 +55,7 @@ class UsersController < ApplicationController
 
     def correct_user
 			@user = User.find(params[:id])
-			redirect_to(root_path) unless @user == current_user
+			redirect_to(root_path) unless current_user?(@user)
     end
 
 end

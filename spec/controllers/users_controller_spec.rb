@@ -3,7 +3,43 @@ require 'spec_helper'
 describe UsersController do
   render_views
 
-  describe "GET 'show'" do 
+describe "GET 'index'" do
+
+	describe "For non-signed in users" do
+		it "should deny access" do
+			get :index
+			response.should redirect_to(signin_path)
+		end
+	end
+
+	describe "For signed-in users" do 
+		before(:each) do
+			@user = test_sign_in(Factory(:user))
+			second = Factory(:user, :name => "Bob", :email => "another@example.com")
+			third  = Factory(:user, :name => "Ben", :email => "another@example.net")
+			@users = [@user, second, third]
+		end		
+		it "should be successful" do
+			get :index
+			response.should be_success
+		end
+		it "should have the right title" do
+			get :index
+			response.should have_selector('title', :content => "All users")
+		end
+		it "should have an element for each user" do
+			get :index
+			@users.each do |user|
+				response.should have_selector("li", :content => user.name)
+			end
+		end
+
+	end
+
+end
+
+
+  describe "GET 'show'" do   # Success
 
     before(:each) do
       @user = Factory(:user)
@@ -42,7 +78,7 @@ describe UsersController do
 
   end
 
-  describe "GET 'new'" do
+  describe "GET 'new'" do  # Success
 
     it "should be successful" do
       get :new
@@ -55,7 +91,7 @@ describe UsersController do
     end
   end
 
-  describe "POST 'create'" do
+  describe "POST 'create'" do  # Success
     describe "failure" do
       before (:each) do
         @attr = { :name =>"", :email =>"", :password =>"",
@@ -105,7 +141,7 @@ describe UsersController do
     end
   end
 
-  describe "GET 'edit'" do
+  describe "GET 'edit'" do  
     before(:each) do
       @user = Factory(:user)
       test_sign_in(@user)
@@ -144,13 +180,13 @@ describe UsersController do
       end
 
     end  
-    describe "success"do 
+    describe "success" do 
       before(:each) do
         @attr = { :name =>"New Name", :email =>"user@example.org", 
 		  :password => "barbaz",   :password_confirmation => "barbaz"}
 
       end  
-      it "should change the user's attributes"do
+      it "should change the user's attributes" do
         put :update, :id => @user, :user => @attr
         user = assigns(:user)
         @user.reload
@@ -158,7 +194,7 @@ describe UsersController do
         @user.email.should == user.email
         @user.encrypted_password.should == user.encrypted_password
       end
-      it "should have the success flash message"do
+      it "should have the success flash message" do
         put :update, :id => @user, :user => @attr
         flash[:success].should =~ /updated/i
       end
@@ -171,31 +207,32 @@ describe UsersController do
       @user = Factory(:user)
     end
 
-		describe"for non-signed in users" do
-		  it "should deny access to 'edit'"do
+		describe "for non-signed in users" do # success
+
+		  it "should deny access to 'edit'" do
 		    get :edit, :id => @user
 		    response.should redirect_to(signin_path)
         flash[:notice].should =~ /sign in/i
 		  end
 
-		  it "should deny access to 'update'"do
+		  it "should deny access to 'update'" do
 		    put :update, :id => @user, :user => {}
 		    response.should redirect_to(signin_path)
 		  end
 		end
 
-		describe"for signed in users" do
+		describe "for signed in users" do
 			before(:each) do
 				wrong_user = Factory(:user, :email => "user@example.net")
 				test_sign_in(wrong_user)
 			end
 
-		  it "should matching users for 'edit'"do
+		  it "should require matching users for 'edit'" do
 		    get :edit, :id => @user
 		    response.should redirect_to(root_path)
  		  end
 
-		  it "should matching users for 'update'"do
+		  it "should matching users for 'update'" do
 		    put :update, :id => @user, :user => {}
 		    response.should redirect_to(root_path)
  		  end

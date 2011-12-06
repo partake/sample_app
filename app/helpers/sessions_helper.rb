@@ -2,12 +2,12 @@ module SessionsHelper
 
   def sign_in(user)
     cookies.permanent.signed[:remember_token] = [user.id, user.salt]
-    current_user = user
+    self.current_user = user # must include self, or else errors
   end
 
   def sign_out
     cookies.delete(:remember_token)
-    current_user = nil
+    self.current_user = nil
 
   end
 
@@ -24,7 +24,7 @@ module SessionsHelper
   end
 
 	def	current_user?(user)
-		user == current_user
+		user == self.current_user
 	end
 
 	def deny_access
