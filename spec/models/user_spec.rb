@@ -153,6 +153,18 @@ describe User do
   end
 
  end
+ describe "admin attribute" do
+   it "should respond to admin " do
+
+   end
+   it "should not be a admin " do
+
+   end
+   it "should be able to convert a admin " do
+
+   end
+
+ end
 
 end
 
