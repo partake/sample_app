@@ -18,6 +18,10 @@ describe "GET 'index'" do
 			second = Factory(:user, :name => "Bob", :email => "another@example.com")
 			third  = Factory(:user, :name => "Ben", :email => "another@example.net")
 			@users = [@user, second, third]
+			30.times do
+          @users << Factory(:user, :name => Factory.next(:name),
+                                   :email => Factory.next(:email))
+      end
 		end		
 		it "should be successful" do
 			get :index
@@ -29,14 +33,22 @@ describe "GET 'index'" do
 		end
 		it "should have an element for each user" do
 			get :index
-			@users.each do |user|
+			User.paginate(:page => 1).each do |user|
 				response.should have_selector("li", :content => user.name)
 			end
 		end
 
-	end
-
-end
+    it "should paginate users" do
+        get :index
+        response.should have_selector("div.pagination")
+        response.should have_selector("span.disabled", :content => "Previous")
+#        response.should have_selector("a", :href => "/users?page=2",
+#                                           :content => "2")
+#        response.should have_selector("a", :href => "/users?page=2",
+#                                          :content => "Next")
+    end # "should paginate users"
+	end # "for signed users"
+end # "GET 'index'"
 
 
   describe "GET 'show'" do   # Success
