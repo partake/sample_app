@@ -17,6 +17,13 @@ class UsersController < ApplicationController
     @users = User.paginate(:page => params[:page])
 	end
 
+	def destroy
+		  User.find(params[:id]).destroy
+		  flash[:success] = "User destroyed."
+		  redirect_to users_path
+	end
+
+
   def create
 #    raise params[:user].inspect
     @user = User.new(params[:user])
