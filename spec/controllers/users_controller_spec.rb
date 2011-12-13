@@ -42,11 +42,28 @@ describe "GET 'index'" do
         get :index
         response.should have_selector("div.pagination")
         response.should have_selector("span.disabled", :content => "Previous")
-#        response.should have_selector("a", :href => "/users?page=2",
+#       response.should have_selector("a", :href => "/users?page=2",
 #                                           :content => "2")
 #        response.should have_selector("a", :href => "/users?page=2",
 #                                          :content => "Next")
     end # "should paginate users"
+
+		it "should have delete links for admins" do
+			@user.toggle!(:admin)
+			other_user = User.all.second
+			get :index
+			response.should have_selector('a', :href => user_path(other_user), 
+																							:content => "delete")
+		end
+
+		it "should not have a delete link for non-admins" do
+			other_user = User.all.second
+			get :index
+			response.should_not have_selector('a', :href => user_path(other_user), 
+																							:content => "delete")
+		end
+
+
 	end # "for signed users"
 end # "GET 'index'"
 
