@@ -104,6 +104,24 @@ end # "GET 'index'"
       response.should have_selector('td>a', :content => user_path(@user),
 					    :href    => user_path(@user))
     end
+    it "should show users microposts" do
+      mp1 = Factory(:micropost, :user => @user, :content => "Foo bar")
+      mp2 = Factory(:micropost, :user => @user, :content => "Foo2 bar")
+      get :show, :id => @user
+	    response.should have_selector('span.content', :content => mp1.content)
+	    response.should have_selector('span.content', :content => mp2.content)
+    end
+    it "should paginate microposts" do
+      35.times {Factory(:micropost, :user => @user, :content => "foo")}
+      get :show, :id => @user
+      response.should have_selector("div.pagination")
+    end
+    it "should disply micropost counts" do
+      10.times {Factory(:micropost, :user => @user, :content => "foo")}
+      get :show, :id => @user
+      response.should have_selector('td.sidebar', 
+                                     :content => @user.microposts.count.to_s)
+    end
 
   end
 
