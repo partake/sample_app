@@ -4,7 +4,7 @@
       <h1><%= @title %></h1>
       <% if @users.any? %>
         <ul class="users">
-          <%= render @users %>
+          <%= render @users.first %>
         </ul>
       <% end %>
     </td>

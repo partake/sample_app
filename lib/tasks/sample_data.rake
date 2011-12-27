@@ -40,8 +40,11 @@ end
 def make_relationships
   users = User.all
   user = users.first
+  user2 = users.second
   following = users[1..50]
   followers = users[3..40]
   following.each { |followed| user.follow!(followed) }
   followers.each { |follower| follower.follow!(user) }
+  following.each { |followed| user2.follow!(followed) }
+  followers.each { |follower| follower.follow!(user2) }
 end
